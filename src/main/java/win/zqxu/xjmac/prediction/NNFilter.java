@@ -45,7 +45,7 @@ public abstract class NNFilter {
     RollBufferShort input = m_rbInput;
     RollBufferShort delta = m_rbDeltaM;
     int order = m_nOrder;
-    int shift = m_nShift;
+//    int shift = m_nShift;
     short[] pary = m_paryM;
     short[] inputData = input.m_pData;
     int inputIndex = input.index;

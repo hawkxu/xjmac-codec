@@ -38,17 +38,17 @@ public class APECompressCreate {
     if (pIO == null || pwfeInput == null || nMaxFrames <= 0)
       throw new JMACException("Bad Parameters");
 
-    APEDescriptor APEDescriptor = new APEDescriptor();
+    APEDescriptor descriptor = new APEDescriptor();
     APEHeaderNew header = new APEHeaderNew();
 
     // create the descriptor (only fill what we know)
-    APEDescriptor.cID = "MAC ";
-    APEDescriptor.nVersion = Globals.MAC_VERSION_NUMBER;
+    descriptor.cID = "MAC ";
+    descriptor.nVersion = Globals.MAC_VERSION_NUMBER;
 
-    APEDescriptor.nDescriptorBytes = APEDescriptor.APE_DESCRIPTOR_BYTES;
-    APEDescriptor.nHeaderBytes = APEHeaderNew.APE_HEADER_BYTES;
-    APEDescriptor.nSeekTableBytes = nMaxFrames * 4;
-    APEDescriptor.nHeaderDataBytes = (nHeaderBytes == IAPECompress.CREATE_WAV_HEADER_ON_DECOMPRESSION)
+    descriptor.nDescriptorBytes = APEDescriptor.APE_DESCRIPTOR_BYTES;
+    descriptor.nHeaderBytes = APEHeaderNew.APE_HEADER_BYTES;
+    descriptor.nSeekTableBytes = nMaxFrames * 4;
+    descriptor.nHeaderDataBytes = (nHeaderBytes == IAPECompress.CREATE_WAV_HEADER_ON_DECOMPRESSION)
         ? 0
         : nHeaderBytes;
 
@@ -67,7 +67,7 @@ public class APECompressCreate {
     // write the data to the file
     ByteArrayWriter writer = new ByteArrayWriter(
         APEDescriptor.APE_DESCRIPTOR_BYTES + APEHeaderNew.APE_HEADER_BYTES);
-    APEDescriptor.write(writer);
+    descriptor.write(writer);
     header.write(writer);
     pIO.write(writer.getBytes());
 
@@ -132,7 +132,7 @@ public class APECompressCreate {
 
     // set the pointer and re-write the updated header and peak level
     pIO.seek(0);
-    writer.reset(descriptor.APE_DESCRIPTOR_BYTES + APEHeaderNew.APE_HEADER_BYTES);
+    writer.reset(APEDescriptor.APE_DESCRIPTOR_BYTES + APEHeaderNew.APE_HEADER_BYTES);
     descriptor.write(writer);
     header.write(writer);
     pIO.write(writer.getBytes());

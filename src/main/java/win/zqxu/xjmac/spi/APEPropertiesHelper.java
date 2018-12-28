@@ -51,8 +51,8 @@ public class APEPropertiesHelper {
    * @throws IOException
    *           - in case of IO error occured
    */
-  public static void readProperties(IAPEDecompress decoder, Map fileProperties,
-      Map formatProperties) throws IOException {
+  public static void readProperties(IAPEDecompress decoder, Map<String, Object> fileProperties,
+      Map<String, Object> formatProperties) throws IOException {
     formatProperties.put("bitrate", new Integer(decoder.getApeInfoDecompressAverageBitrate()));
     formatProperties.put("vbr", new Boolean(true));
     formatProperties.put("quality", new Integer(10));

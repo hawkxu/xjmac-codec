@@ -25,7 +25,7 @@ import java.io.PrintStream;
  * Author: Dmitry Vaguine Date: 04.03.2004 Time: 14:51:31
  */
 public class JMACException extends RuntimeException {
-
+  private static final long serialVersionUID = 1L;
   private Throwable exception;
 
   public JMACException() {

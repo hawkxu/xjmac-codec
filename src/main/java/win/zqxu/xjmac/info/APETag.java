@@ -31,7 +31,7 @@ import win.zqxu.xjmac.tools.*;
 /**
  * Author: Dmitry Vaguine Date: 04.03.2004 Time: 14:51:31
  */
-public class APETag implements Comparator {
+public class APETag implements Comparator<APETagField> {
   public final static String APE_TAG_FIELD_TITLE = "Title";
   public final static String APE_TAG_FIELD_ARTIST = "Artist";
   public final static String APE_TAG_FIELD_ALBUM = "Album";
@@ -465,14 +465,11 @@ public class APETag implements Comparator {
   private void SortFields() {
     // sort the tag fields by size (so that the smallest fields are at the front
     // of the tag)
-    Arrays.sort(m_aryFields.toArray(), this);
+    Arrays.sort(m_aryFields.toArray(new APETagField[0]), this);
   }
 
-  public int compare(Object pA, Object pB) {
-    APETagField pFieldA = (APETagField) pA;
-    APETagField pFieldB = (APETagField) pB;
-
-    return pFieldA.GetFieldSize() - pFieldB.GetFieldSize();
+  public int compare(APETagField pA, APETagField pB) {
+    return pA.GetFieldSize() - pB.GetFieldSize();
   }
 
   // helper set / get field functions
@@ -492,7 +489,7 @@ public class APETag implements Comparator {
   private File m_spIO;
   private boolean m_bAnalyzed = false;
   private int m_nTagBytes = 0;
-  private List m_aryFields = new ArrayList();
+  private List<APETagField> m_aryFields = new ArrayList<>();
   private boolean m_bHasAPETag;
   private int m_nAPETagVersion;
   private boolean m_bHasID3Tag;
