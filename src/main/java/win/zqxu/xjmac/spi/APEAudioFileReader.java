@@ -47,7 +47,7 @@ import win.zqxu.xjmac.tools.JMACException;
  * Provider for MAC audio file reading.
  */
 public class APEAudioFileReader extends AudioFileReader {
-  private final static int MAX_HEADER_SIZE = 16384;
+  private final static int MAX_HEADER_SIZE = 32768;
 
   /**
    * Obtains the audio file format of the File provided. The File must point to
