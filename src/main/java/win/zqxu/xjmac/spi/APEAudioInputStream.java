@@ -41,6 +41,7 @@ import java.io.InputStream;
  */
 public class APEAudioInputStream extends AudioInputStream {
   private final static int BLOCKS_PER_DECODE = 9216;
+  private InputStream in;
   private IAPEDecompress m_decoder = null;
   private File file = null;
   private byte[] buffer = null;
@@ -61,6 +62,7 @@ public class APEAudioInputStream extends AudioInputStream {
   public APEAudioInputStream(AudioFormat format, InputStream stream) {
     super(stream, format, AudioSystem.NOT_SPECIFIED);
     try {
+      in = stream;
       file = new InputStreamFile(stream);
       m_decoder = IAPEDecompress.CreateIAPEDecompress(file);
 
@@ -258,4 +260,8 @@ public class APEAudioInputStream extends AudioInputStream {
     buffer = null;
   }
 
+  @Override
+  public long getFrameLength() {
+    return ((AudioInputStream) in).getFrameLength();
+  }
 }

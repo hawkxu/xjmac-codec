@@ -19,9 +19,16 @@
 
 package win.zqxu.xjmac.spi;
 
+import java.io.BufferedInputStream;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.sound.sampled.spi.AudioFileReader;
 
@@ -29,9 +36,6 @@ import win.zqxu.xjmac.decoder.IAPEDecompress;
 import win.zqxu.xjmac.tools.Globals;
 import win.zqxu.xjmac.tools.InputStreamFile;
 import win.zqxu.xjmac.tools.JMACException;
-
-import java.io.*;
-import java.net.URL;
 
 /**
  * Author: Dmitry Vaguine
@@ -59,24 +63,9 @@ public class APEAudioFileReader extends AudioFileReader {
    */
   public AudioFileFormat getAudioFileFormat(File file)
       throws UnsupportedAudioFileException, IOException {
-    if (Globals.DEBUG) System.out.println("APEAudioFileReader.getAudioFileFormat( File )");
-    IAPEDecompress decoder;
-    try {
-      decoder = IAPEDecompress
-          .CreateIAPEDecompress(new win.zqxu.xjmac.tools.RandomAccessFile(file, "r"));
-    } catch (JMACException e) {
-      throw new UnsupportedAudioFileException("Unsupported audio file");
-    } catch (EOFException e) {
-      throw new UnsupportedAudioFileException("Unsupported audio file");
+    try (FileInputStream stream = new FileInputStream(file)) {
+      return getAudioFileFormat(stream);
     }
-
-    APEAudioFormat format = new APEAudioFormat(APEEncoding.APE, decoder.getApeInfoSampleRate(),
-        decoder.getApeInfoBitsPerSample(),
-        decoder.getApeInfoChannels(),
-        AudioSystem.NOT_SPECIFIED, AudioSystem.NOT_SPECIFIED, false);
-
-    return new APEAudioFileFormat(APEAudioFileFormatType.APE, (int) file.length(), format,
-        AudioSystem.NOT_SPECIFIED);
   }
 
   /**
@@ -129,10 +118,11 @@ public class APEAudioFileReader extends AudioFileReader {
     APEAudioFormat format = new APEAudioFormat(APEEncoding.APE, decoder.getApeInfoSampleRate(),
         decoder.getApeInfoBitsPerSample(),
         decoder.getApeInfoChannels(),
-        AudioSystem.NOT_SPECIFIED, AudioSystem.NOT_SPECIFIED, false);
-
-    return new APEAudioFileFormat(APEAudioFileFormatType.APE, AudioSystem.NOT_SPECIFIED, format,
-        AudioSystem.NOT_SPECIFIED);
+        decoder.getApeInfoChannels() * 2, decoder.getApeInfoSampleRate(), false);
+    int seconds = decoder.getApeInfoDecompressLengthMS() / 1000;
+    float frameLength = seconds * format.getFrameSize() * format.getSampleRate();
+    return new APEAudioFileFormat(APEAudioFileFormatType.APE, stream.available(),
+        format, (int) frameLength);
   }
 
   /**
